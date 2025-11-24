@@ -3,6 +3,7 @@
 //
 
 #include "THashMedicam.h"
+#include <cmath>
 // Funciones sobre numeros primos
 bool THashMedicam::esprimo(unsigned n) {
     for (unsigned i = 2; i <= n/2; ++i)
@@ -31,7 +32,10 @@ int THashMedicam::primo_mayor(unsigned numero) {
 unsigned THashMedicam::hash(unsigned long clave, int i) {
     unsigned long posicionfinal;
     // peor FUNCION DE DISPERSION 1
-    posicionfinal= (clave+(i*i)) % tamaf;
+    unsigned long parteClave = clave;
+    unsigned long parteCuadrado = pow(i, 2);
+    unsigned long parteTamanioFisico = tamaf;
+    posicionfinal= (parteClave+(parteCuadrado)) % parteTamanioFisico;
     return posicionfinal;
 }
 
