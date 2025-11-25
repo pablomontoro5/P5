@@ -255,68 +255,6 @@ Laboratorio *MediExpress::buscarLab(const std::string &nombreLab) {
     return nullptr;
 }
 
-MediExpress::MediExpress(const std::string &_ficheroMedicamentos, const std::string &_ficheroLaboratorios, const std::string &_ficheroFarmacias) {
-    _cargarMedicamentosDesdeFichero(_ficheroMedicamentos);
-
-    _cargarLaboratoriosDesdeFichero(_ficheroLaboratorios);
-
-    _cargarFarmaciasDesdeFichero(_ficheroFarmacias);
-    std::cout << " *** Muestro lista de laboratorios :  *** " << std::endl;
-    std::list<Laboratorio>::iterator it = _labs.begin();
-    while (it!=_labs.end()){
-        std::cout << " *** Id del laboratorio : *** " << (*it).getId() << std::endl;
-        ++it;
-    }
-    std::cout << " *** Total de numero de laboratorios : *** " << _labs.size() << std::endl;
-
-
-    asignarParesYVerificar();
-
-    //Asociar los 152 medicamentos sin laboratorio a laboratorios de Madrid
-    asignarLabsMadridAMedicamentosSinAsignar();
-
-    //Leemos la segunda lectura del tercer fichero
-    std::vector<std::string> _vectorDeCifsDeFarmacias;
-    std::ifstream is;
-    std::stringstream  columnas;
-    std::string fila;
-    int contador =0;
-    std::string _nuevoCif = "";
-    is.open(_ficheroFarmacias);
-    if(is.good()){
-        while(getline(is,fila)){
-            if(fila != ""){
-                columnas.str(fila);
-                getline(columnas, _nuevoCif, ';');
-                fila = "";
-                columnas.clear();
-                _vectorDeCifsDeFarmacias.push_back(_nuevoCif);
-
-            }
-        }
-        is.close();
-    }else{
-        std::cout << "*** Error de apertura en archivo de medicamentos *** " << std::endl;
-    }
-
-    std::map<int,PA_Medicamento>::iterator it3=_medicamentos.begin();
-    for (int i=0; i<_vectorDeCifsDeFarmacias.size(); i++){
-        Farmacia* f= buscarFarmacia(_vectorDeCifsDeFarmacias[i]);
-        int c=0;
-        while (c<100){
-            suministrarFarmacia(f,it3->second.getIdNum(), 10);
-
-            if (it3==--_medicamentos.end()) {
-                it3 = _medicamentos.begin();
-            }else {
-                it3++;
-            }
-            c++;
-        }
-    }
-
-}
-
 
 /**
  * @brief Busca medicamentos cuyo nombre contenga la subcadena indicada.
@@ -484,3 +422,290 @@ void MediExpress::_cargarLaboratoriosDesdeFichero(const std::string &_ficheroLab
         std::cout << "***Ha ocurrido un error de apertura en el archivo de laboratorios ***" <<  std::endl;
     }
 }
+
+
+void MediExpress::mostrarEstadoTabla() {
+
+    std::cout << "----------------------------------------------\n";
+    std::cout << "        ESTADO DE LA TABLA HASH\n";
+    std::cout << "----------------------------------------------\n";
+
+    std::cout << "Tamaño de la tabla         : " << idMedication.tamTabla() << "\n";
+    std::cout << "Número de elementos        : " << idMedication.numElementos() << "\n";
+    std::cout << "Factor de carga            : " << idMedication.factorCarga() << "\n";
+    std::cout << "Máx. colisiones insertando : " << idMedication.maxColisiones() << "\n";
+    std::cout << "Veces colisiones >10       : " << idMedication.numMax10() << "\n";
+    std::cout << "Promedio de colisiones     : " << idMedication.promedioColisiones() << "\n";
+    std::cout << "Número de redisersiones    : " << idMedication.numRedispersiones() << "\n";
+    std::cout << "----------------------------------------------\n";
+
+
+}
+
+MediExpress::MediExpress(): idMedication(3310, 0.7),
+                            _nombMedication(), _labs(), _pharmacy(), _vMedi(), listaPaMed() {
+
+}
+
+MediExpress::MediExpress(const std::string &nomFichPaMed, const std::string &nomFichLab, const std::string &nomFichFar,
+                         unsigned long tam, float lamda): _labs(), _pharmacy(), idMedication(tam, lamda), _nombMedication(), _vMedi(), listaPaMed() {
+
+    std::ifstream is;
+    std::stringstream columnas;
+    std::string fila;
+    int contador = 0;
+
+    int id_num = 0;
+    std::string id_alpha = "";
+    std::string nombre = "";
+    std::string num = "";
+
+    is.open(nomFichPaMed);
+    if (is.good()) {
+        while (getline(is, fila)) {
+            //¿Se ha leído una nueva fila?
+            if (fila != "") {
+                columnas.str(fila);
+                getline(columnas, num, ';');
+                getline(columnas, id_alpha, ';');
+                getline(columnas, nombre, ';');
+                id_num = stoi(num);
+
+                fila = "";
+                columnas.clear();
+
+                PA_Medicamento dato(id_num,id_alpha,nombre);
+
+                idMedication.insertar(id_num, dato);  //PR5
+
+                //insertar medicamentos tb en una lista PR5
+                listaPaMed.push_back(dato);
+
+                //insertar los identificadores tb en un vector,
+                // para hacer el rendimiento  PR5
+                _vMedi.push_back(id_num);
+            }
+        }
+        is.close();
+    } else {
+        std::cout << "Error de apertura en archivo" << std::endl;
+    }
+
+    /*
+    //PRUEBA DE RENDIMIENTO  PR5
+    std::cout << " 2.- Prueba de RENDIMIENTO: " << std::endl;
+
+    Timer t;
+    t.start();
+    for (int i=0; i<vMedi.size(); i++){
+        idMedication.buscar(vMedi[i]);
+    }
+    t.stop();
+    std::cout << "Tiempo busca Hash: " << t.getElapsedTimeInMilliSec() << " ms" << std::endl;
+
+    t.start();
+    for (int i=0; i<vMedi.size(); i++){
+        list<PaMedicamento>::iterator it=listaPaMed.begin();
+        while (it!=listaPaMed.end())
+        {
+            if (it->getIdNum() == vMedi[i])
+                break;
+            it++;
+        }
+    }
+    t.stop();
+    std::cout << "Tiempo busca list: " << t.getElapsedTimeInMilliSec() << " ms" << std::endl;
+*/
+
+    //PR5 GENERAMOS LA ASOCIACION NOMBMEDICATION
+    for (int i=0; i<_vMedi.size(); i++){
+        PA_Medicamento* p=idMedication.buscar(_vMedi[i]);
+        std::string nombre=p->getNombre();
+        std::stringstream separar;
+        std::string cad;
+        separar.str(nombre);
+        while (getline(separar, cad, ' ')){
+            _nombMedication.insert(make_pair(cad,p));
+        }
+    }
+
+
+    //SEGUNDO FICHERO
+
+    int id = 0;
+    std::string nombrelab = "";
+    std::string direccion = "";
+    std::string cp = "";
+    std::string localidad = "";
+
+    is.open(nomFichLab);
+    if (is.good()) {
+
+        while (getline(is, fila)) {
+            //¿Se ha leído una nueva fila?
+            if (fila != "") {
+                columnas.str(fila);
+
+                getline(columnas, num, ';'); //leemos caracteres hasta encontrar y omitir ';'
+                getline(columnas, nombre, ';');
+                getline(columnas, direccion, ';');
+                getline(columnas, cp, ';');
+                getline(columnas, localidad, '\r');
+                id_num = stoi(num);
+
+                fila = "";
+                columnas.clear();
+
+                Laboratorio dato(id_num,nombre,direccion,cp,localidad);
+
+                _labs.push_back(dato);
+
+            }
+        }
+        is.close();
+    } else {
+        std::cout << "Error de apertura en archivo" << std::endl;
+    }
+
+
+    //TERCER FICHERO
+
+    std::string ciff = "";
+    std::string provinciaf = "";
+    std::string localidadf = "";
+    std::string nombref = "";
+    std::string direccionf= "";
+    std::string codpostalf= "";
+
+    is.open(nomFichFar);
+    if (is.good()) {
+
+        while (getline(is, fila)) {
+            //¿Se ha leído una nueva fila?
+            if (fila != "") {
+                columnas.str(fila);
+
+                getline(columnas, ciff, ';'); //leemos caracteres hasta encontrar y omitir ';'
+                getline(columnas, provinciaf, ';');
+                getline(columnas, localidadf, ';');
+                getline(columnas, nombref, ';');
+                getline(columnas, direccionf, ';');
+                getline(columnas, codpostalf, '\r');
+
+                fila = "";
+                columnas.clear();
+
+                Farmacia datof(ciff,provinciaf,localidadf,nombref,direccionf,codpostalf, this);
+
+                _pharmacy.insert(std::pair<std::string,Farmacia>(provinciaf, datof));
+
+            }
+        }
+        is.close();
+    } else {
+        std::cout << "Error de apertura en archivo" << std::endl;
+    }
+
+    //ENLAZAMOS CADA 2 PAMEDIC. CON UN LABORATORIO
+
+    std::list<Laboratorio>::iterator itl=_labs.begin();
+    std::vector<int>::iterator itm=_vMedi.begin();
+    PA_Medicamento* p;
+    while (itm!=_vMedi.end() && itl !=_labs.end()){
+        p=idMedication.buscar(*itm);
+        suministrarMed(p,&(*itl));
+        itm++;
+        p=idMedication.buscar(*itm);
+        suministrarMed(p,&(*itl));
+        itl++;
+        itm++;
+    }
+
+    //laboratorios madrid
+    std::vector<Laboratorio*> madrid= buscarLabCiudad("Madrid");
+    //Medicamentos sin laboratorio
+    std::vector<PA_Medicamento*> sin= getMedicamentosSinLab();
+    // cout << "Total PaMedic. sin Laboratorio:" << sin.tama() << endl;
+
+    for (int i=0; i<madrid.size() && i<sin.size(); i++){
+        // cout << i << endl;
+        suministrarMed(sin[i],madrid[i]);
+
+    }
+
+    /*
+    //MOSTRAR PARA COMPROBAR
+    int cont=0;
+    itm=idMedication.begin();
+    while (itm!=idMedication.end()){
+        if ( itm->second.servidoPor() )
+            cout << "PaMedicamento:" << itm->second.getIdNum() <<
+                 "Labor.: " << itm->second.servidoPor()->getId() << endl;
+        else
+            cont++;
+        itm++;
+    }
+     */
+
+
+//SEGUNDA LECTURA DEL TERCER FICHERO
+    std::vector<std::string> cif_Farma;
+    contador=0;
+
+    is.open(nomFichFar);
+    if (is.good()) {
+        while (getline(is, fila)) {
+            //¿Se ha leído una nueva fila?
+            if (fila != "") {
+                columnas.str(fila);
+                getline(columnas, ciff, ';'); //leemos caracteres hasta encontrar y omitir ';'
+                fila = "";
+                columnas.clear();
+
+                cif_Farma.push_back(ciff);
+
+                /*       std::cout << ++contador
+                                 << " cifs Farma: ( cif=" << ciff << " )" << std::endl;  */
+            }
+        }
+        is.close();
+        // std::cout << "cifs sin repetir: " << pharmacy.size() << endl;
+    } else {
+        std::cout << "Error de apertura en archivo" << std::endl;
+    }
+
+    //ASOCIAMOS PaMedicamentos a cada farmacia del AVL, a partir del vector de cifs
+    //PR5
+    std::vector<int>::iterator it=_vMedi.begin();
+    for (int i=0; i<cif_Farma.size(); i++){
+
+        Farmacia* f= buscarFarmacia(cif_Farma[i]);
+        int c=0;
+        while (c<100){
+
+            //p=idMedication.buscar(*it);
+
+            suministrarFarmacia(f, *it, 10);
+
+            if (it==--_vMedi.end())
+                it=_vMedi.begin();
+            else
+                it++;
+            c++;
+        }
+    }
+
+}
+
+unsigned long MediExpress::contarMedicamentos(const std::string &nomFichPaMed) {
+    std::ifstream f(nomFichPaMed);
+    if (!f) throw std::runtime_error("Error abriendo pa_medicamentos.csv");
+
+    unsigned long count = 0;
+    std::string linea;
+    while (getline(f, linea))
+        count++;
+
+    return count;
+}
+

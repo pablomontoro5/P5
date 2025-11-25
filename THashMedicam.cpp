@@ -62,3 +62,84 @@ THashMedicam::THashMedicam(unsigned long maxElementos, double lamda): tamaf(prim
 {
     primoMenor=primo_menor(tamaf);
 };
+
+bool THashMedicam::insertar(unsigned long clave, PA_Medicamento &dato) {
+    unsigned i=0,y;
+    bool encontrado = false;
+
+    while (!encontrado ) {
+        y=hash(clave, i);
+        //y=hash2(clave, i);
+        //y=hash3(clave, i);
+
+        if (tabla[y].getMarca()==LIBRE || tabla[y].getMarca()==DISPONIBLE ) {
+            tamal++;
+            tabla[y].setDato(dato);
+            tabla[y].setMarca(OCUPADA);
+            tabla[y].setClave(clave);
+            encontrado = true;   //Encontre un sitio libre
+        }else{
+            if (tabla[y].getDato().getIdNum()==clave)
+                return false;  //EL medicamento ya esta en la tabla
+            else
+                ++i;   //No he dado aun con una posicion libre
+        }
+    }
+
+    if (i>maxCol){
+        maxCol=i;
+    }
+    if (i>10) {
+        max10++;
+    }
+    sumaColisiones+=i;
+
+
+
+    return encontrado;
+}
+
+PA_Medicamento *THashMedicam::buscar(unsigned long clave) {
+    unsigned i=0,y=0;
+    bool enc = false;
+    while (!enc ) {
+        y=hash(clave, i);
+        //y=hash2(clave, i);
+        //y=hash3(clave, i);
+
+        if (tabla[y].getMarca()==OCUPADA && tabla[y].getClave()==clave){
+
+            return (&tabla[y].getDato());
+            //enc=true;
+        }else{
+            if (tabla[y].getMarca()==LIBRE){
+                return 0;
+            }else
+                ++i;   //No he dado aun con su posicion
+        }
+    }
+    return 0;
+}
+
+bool THashMedicam::borrar(unsigned long clave) {
+    unsigned i=0,y=0;
+    bool fin = false;
+    while (!fin) {
+        y=hash(clave, i);
+        //y=hash2(clave, i);
+        //y=hash3(clave, i);
+        if (tabla[y].getMarca()==OCUPADA && tabla[y].getMarca()==clave){
+
+            tabla[y].setMarca(DISPONIBLE); //lo encontre lo borro y salgo del bucle
+            fin=true;
+            //tabla[y].dato;
+            tamal--;
+        }else{
+            if (tabla[y].getMarca()==LIBRE)
+                break;
+            else
+                ++i;   //No he dado aun con su posicion
+        }
+    }
+    return fin;
+}
