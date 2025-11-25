@@ -42,17 +42,18 @@ unsigned THashMedicam::hash(unsigned long clave, int i) {
 //  FUNCION DE DISPERSION 2
 unsigned THashMedicam::hash2(unsigned long clave, int i) {
     unsigned long func1 = clave % tamaf;
-    //  Dispersion es doble
+    //  Dispersión doble
     unsigned long func2 = primoMenor - (clave % primoMenor);
     unsigned long posicionfinal = (func1 + (i * func2)) % tamaf;
     return posicionfinal;
 }
-//  la funcion de dispersion es doble
-unsigned THashMedicam::hash3(unsigned long clave, int i) {
-    unsigned long posicion,posicionfinal;
 
-    posicion = clave % tamaf;   //  FUNCION DE DISPERSION 3
-    posicionfinal = (posicion + (i* (1+(clave % (primoMenor))))) % tamaf;
+//  FUNCION DE DISPERSION 3
+unsigned THashMedicam::hash3(unsigned long clave, int i) {
+    unsigned long fun1 = clave % tamaf;
+    //  Dispersión doble
+    unsigned long fun2 = 1 + (clave % primoMenor);
+    unsigned long posicionfinal = (fun1 + (i* fun2)) % tamaf;
     return posicionfinal;
 }
 
