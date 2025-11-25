@@ -5,24 +5,26 @@
 #include "THashMedicam.h"
 #include <cmath>
 // Funciones sobre numeros primos
-bool THashMedicam::esprimo(unsigned n) {
-    for (unsigned i = 2; i <= n/2; ++i)
-        if (n % i == 0)
+bool THashMedicam::esprimo(unsigned int n) {
+    for(unsigned int i=2; i<=n/2; ++i) {
+        if (n%i == 0) {
             return false;
+        }
+    }
     return true;
 }
 
-int THashMedicam::primo_menor(unsigned numero) {
-    int i = numero-1;
-    while (!esprimo(i)) {
+unsigned int THashMedicam::primo_menor(unsigned int numero) {
+    unsigned int i = numero-1;
+    while(!esprimo(i)) {
         --i;
     }
     return i;
 }
 
-int THashMedicam::primo_mayor(unsigned numero) {
-    int i = numero;
-    while (!esprimo(i)) {
+unsigned int THashMedicam::primo_mayor(unsigned int numero) {
+    unsigned int i = numero;
+    while(!esprimo(i)) {
         ++i;
     }
     return i;

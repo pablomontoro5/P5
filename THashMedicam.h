@@ -25,9 +25,9 @@ private:
     std::vector<Entrada> tabla;     // la tabla hash en sí
 
     // ----------- FUNCIONES PRIVADAS -------------
-    bool esprimo(unsigned n);
-    int primo_menor(unsigned numero);
-    int primo_mayor(unsigned numero);
+    bool esprimo(unsigned int n);
+    unsigned int primo_menor(unsigned int numero);
+    unsigned int primo_mayor(unsigned int numero);
 
     // Tres funciones hash según práctica
     unsigned hash(unsigned long clave, int intento);
