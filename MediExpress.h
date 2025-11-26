@@ -8,7 +8,7 @@
 #include <vector>
 #include <list>
 #include <map>
-
+#include <algorithm>
 #include "PA_Medicamento.h"
 #include "Laboratorio.h"
 #include "Farmacia.h"
@@ -32,7 +32,6 @@ public:
     void asignarParesYVerificar();
 
     void _cargarFarmaciasDesdeFichero(const std::string& _ficheroFarmacias);
-    MediExpress(const std::string &_ficheroMedicamentos, const std::string &_ficheroLaboratorios, const std::string &_ficheroFarmacias);
     MediExpress(const std::string &nomFichPaMed, const std::string &nomFichLab,
                 const std::string &nomFichFar, unsigned long tam, float lamda);
 
@@ -61,8 +60,10 @@ public:
 
     void mostrarEstadoTabla();
     MediExpress();
+    void _postprocesarCargas(const std::string &fichFarmacias);
 
-    };
+
+};
 
 
 #endif //P2_MEDIEXPRESS_H
