@@ -13,7 +13,7 @@ git commit -m "Initial commit: estructura base del proyecto"
 ### Crear repositorio remoto y enlazarlo
 
 ``` bash
-git remote add origin https://github.com/TU_USUARIO/practica5-hash.git
+git remote add origin https://github.com/TU_USUARIO/practica5-_funcionHashNumeroUno.git
 git branch -M main
 git push -u origin main
 ```
@@ -24,7 +24,7 @@ Settings → Collaborators → Add: Lázaro
 
 ------------------------------------------------------------------------
 
-# 🟦 TÚ --- Responsable del hash, análisis y búsquedas
+# 🟦 TÚ --- Responsable del _funcionHashNumeroUno, análisis y búsquedas
 
 ## Fase 1 --- Implementación básica de THashMedicam
 
@@ -32,26 +32,26 @@ Settings → Collaborators → Add: Lázaro
 git checkout -b feature/thash-basico
 # Trabajas en el código
 git add .
-git commit -m "Implementación base de tabla hash"
+git commit -m "Implementación base de tabla _funcionHashNumeroUno"
 git push -u origin feature/thash-basico
 ```
 
-## Fase 2A --- Función hash cuadrática
+## Fase 2A --- Función _funcionHashNumeroUno cuadrática
 
 ``` bash
-git checkout -b feature/hash-cuadratica
+git checkout -b feature/_funcionHashNumeroUno-cuadratica
 git add .
 git commit -m "Función de exploración cuadrática implementada"
-git push -u origin feature/hash-cuadratica
+git push -u origin feature/_funcionHashNumeroUno-cuadratica
 ```
 
 ## Fase 3 --- Métricas
 
 ``` bash
-git checkout -b feature/metricas-hash
+git checkout -b feature/metricas-_funcionHashNumeroUno
 git add .
 git commit -m "Métricas de colisiones incluidas"
-git push -u origin feature/metricas-hash
+git push -u origin feature/metricas-_funcionHashNumeroUno
 ```
 
 ## Fase 4 --- Análisis de configuraciones
@@ -59,7 +59,7 @@ git push -u origin feature/metricas-hash
 ``` bash
 git checkout -b feature/analisis-configuraciones
 git add analisis_Thash.md
-git commit -m "Resultados y análisis de configuraciones del hash"
+git commit -m "Resultados y análisis de configuraciones del _funcionHashNumeroUno"
 git push -u origin feature/analisis-configuraciones
 ```
 
@@ -88,17 +88,17 @@ git push -u origin feature/pruebas-medicamentos
 ## Fase 2B --- Doble dispersión A y B
 
 ``` bash
-git checkout -b feature/hash-dobleA
+git checkout -b feature/_funcionHashNumeroUno-dobleA
 git add .
 git commit -m "Doble dispersión A implementada"
-git push -u origin feature/hash-dobleA
+git push -u origin feature/_funcionHashNumeroUno-dobleA
 ```
 
 ``` bash
-git checkout -b feature/hash-dobleB
+git checkout -b feature/_funcionHashNumeroUno-dobleB
 git add .
 git commit -m "Doble dispersión B implementada"
-git push -u origin feature/hash-dobleB
+git push -u origin feature/_funcionHashNumeroUno-dobleB
 ```
 
 ## Fase 3B --- Tamaño primo según λ
@@ -124,7 +124,7 @@ git push -u origin feature/integracion-mediexpress
 ``` bash
 git checkout -b feature/rendimiento
 git add .
-git commit -m "Comparación de tiempos entre hash y lista implementada"
+git commit -m "Comparación de tiempos entre _funcionHashNumeroUno y lista implementada"
 git push -u origin feature/rendimiento
 ```
 
@@ -176,13 +176,13 @@ git push --tags
 
   Fase                              Responsable
   --------------------------------- -------------
-  THash básico                      Tú
-  Hash cuadrática                   Tú
-  Doble dispersión A y B            Lázaro
-  Métricas                          Tú
-  Tamaño primo                      Lázaro
-  Análisis final                    Tú
-  Carga de ficheros y MediExpress   Lázaro
+  THash básico                      Tú (Hecho)
+  Hash cuadrática                   Tú (Hecho)
+  Doble dispersión A y B            Lázaro (Hecho)
+  Métricas                          Tú (Hecho)
+  Tamaño primo                      Lázaro (Hecho)
+  Análisis final                    Tú (Hecho)
+  Carga de ficheros y MediExpress   Lázaro (Hecho)
   Multimap nombres                  Tú
-  Rendimiento lista vs hash         Lázaro
+  Rendimiento lista vs _funcionHashNumeroUno         Lázaro
   Redisperción dinámica             Lázaro
