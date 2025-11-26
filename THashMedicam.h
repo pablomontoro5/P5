@@ -22,17 +22,17 @@ private:
     unsigned long sumaColisiones;   // para el promedio
     unsigned redisp;                // número de redispersiones realizadas
 
-    std::vector<Entrada> tabla;     // la tabla hash en sí
+    std::vector<Entrada> tabla;     // la tabla _funcionHashNumeroUno en sí
 
     // ----------- FUNCIONES PRIVADAS -------------
     bool esprimo(unsigned n);
     int primo_menor(unsigned numero);
     int primo_mayor(unsigned numero);
 
-    // Tres funciones hash según práctica
-    unsigned hash(unsigned long clave, int intento);
-    unsigned hash2(unsigned long clave, int i);
-    unsigned hash3(unsigned long clave, int i);
+    // Tres funciones _funcionHashNumeroUno según práctica
+    unsigned _funcionHashNumeroUno(unsigned long clave, int intento);
+    unsigned _funcionHashNumeroDos(unsigned long clave, int i);
+    unsigned _funcionHashNumero3(unsigned long clave, int i);
 
 public:
 
@@ -60,7 +60,6 @@ public:
     unsigned int numMax10() const { return max10; }
     float promedioColisiones() const { return tamal == 0 ? 0 : (float)sumaColisiones / tamal; }
     unsigned int numRedispersiones() const { return redisp; }
-
 
 };
 #endif //P5_THASHMEDICAM_H

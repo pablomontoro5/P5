@@ -29,7 +29,7 @@ int THashMedicam::primo_mayor(unsigned numero) {
 }
 
 //  la función de dispersión es cuadratica
-unsigned THashMedicam::hash(unsigned long clave, int i) {
+unsigned THashMedicam::_funcionHashNumeroUno(unsigned long clave, int i) {
     unsigned long posicionfinal;
     // peor FUNCION DE DISPERSION 1
     unsigned long parteClave = clave;
@@ -40,7 +40,7 @@ unsigned THashMedicam::hash(unsigned long clave, int i) {
 }
 
 //  la funcion de dispersion es doble
-unsigned THashMedicam::hash2(unsigned long clave, int i) {
+unsigned THashMedicam::_funcionHashNumeroDos(unsigned long clave, int i) {
     unsigned long posicion,posicionfinal;
 
     posicion = clave % tamaf;   //  FUNCION DE DISPERSION 2
@@ -48,7 +48,7 @@ unsigned THashMedicam::hash2(unsigned long clave, int i) {
     return posicionfinal;
 }
 //  la funcion de dispersion es doble
-unsigned THashMedicam::hash3(unsigned long clave, int i) {
+unsigned THashMedicam::_funcionHashNumero3(unsigned long clave, int i) {
     unsigned long posicion,posicionfinal;
 
     posicion = clave % tamaf;   //  FUNCION DE DISPERSION 3
@@ -68,9 +68,9 @@ bool THashMedicam::insertar(unsigned long clave, PA_Medicamento &dato) {
     bool encontrado = false;
 
     while (!encontrado ) {
-        y=hash(clave, i);
-        //y=hash2(clave, i);
-        //y=hash3(clave, i);
+        //y= _funcionHashNumeroUno(clave, i);
+        //y= _funcionHashNumeroDos(clave, i);
+        y= _funcionHashNumero3(clave, i);
 
         if (tabla[y].getMarca()==LIBRE || tabla[y].getMarca()==DISPONIBLE ) {
             tamal++;
@@ -103,9 +103,9 @@ PA_Medicamento *THashMedicam::buscar(unsigned long clave) {
     unsigned i=0,y=0;
     bool enc = false;
     while (!enc ) {
-        y=hash(clave, i);
-        //y=hash2(clave, i);
-        //y=hash3(clave, i);
+        //y= _funcionHashNumeroUno(clave, i);
+        //y= _funcionHashNumeroDos(clave, i);
+        y= _funcionHashNumero3(clave, i);
 
         if (tabla[y].getMarca()==OCUPADA && tabla[y].getClave()==clave){
 
@@ -125,9 +125,9 @@ bool THashMedicam::borrar(unsigned long clave) {
     unsigned i=0,y=0;
     bool fin = false;
     while (!fin) {
-        y=hash(clave, i);
-        //y=hash2(clave, i);
-        //y=hash3(clave, i);
+        //y= _funcionHashNumeroUno(clave, i);
+        //y= _funcionHashNumeroDos(clave, i);
+        y= _funcionHashNumero3(clave, i);
         if (tabla[y].getMarca()==OCUPADA && tabla[y].getMarca()==clave){
 
             tabla[y].setMarca(DISPONIBLE); //lo encontre lo borro y salgo del bucle
@@ -142,4 +142,8 @@ bool THashMedicam::borrar(unsigned long clave) {
         }
     }
     return fin;
+}
+
+THashMedicam::~THashMedicam() {
+
 }
