@@ -56,6 +56,12 @@ public:
     unsigned int tamTabla() const { return tamaf; }
     unsigned int maxColisiones() const { return maxCol; }
     unsigned int numMax10() const { return max10; }
+    float factorCarga() const{
+        if(tamaf == 0){
+            return 0.0;
+        }
+        return static_cast<float>(tamal) / static_cast<float>(tamaf);
+    }
     float promedioColisiones() const { return tamal == 0 ? 0 : (float)sumaColisiones / tamal; }
     unsigned int numRedispersiones() const { return redisp; }
 
