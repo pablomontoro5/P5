@@ -20,7 +20,7 @@ public:
     // --- GETTERS ---
     unsigned long getClave() const { return clave; }
     Estado getMarca() const { return marca; }
-    const PA_Medicamento& getDato() const { return dato; }
+    PA_Medicamento& getDato() { return dato; }
 
     // --- SETTERS ---
     void setClave(unsigned long c) { clave = c; }
