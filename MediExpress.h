@@ -8,16 +8,21 @@
 #include <vector>
 #include <list>
 #include <map>
-
+#include <algorithm>
 #include "PA_Medicamento.h"
 #include "Laboratorio.h"
 #include "Farmacia.h"
+#include "THashMedicam.h"
 
 class MediExpress {
 private:
-    std::vector<Farmacia> _pharmacy;
+    std::multimap<std::string,Farmacia> _pharmacy;
     std::list<Laboratorio> _labs;
-    std::map<int,PA_Medicamento> _medicamentos;
+    //P5
+    THashMedicam idMedication;
+    std::vector<int> _vMedi;
+    std::multimap<std::string,PA_Medicamento*> _nombMedication;
+    std::list<PA_Medicamento> listaPaMed;
 
 public:
     std::vector<Laboratorio*> buscarLabs(const std::string &nombrePa);
@@ -27,8 +32,8 @@ public:
     void asignarParesYVerificar();
 
     void _cargarFarmaciasDesdeFichero(const std::string& _ficheroFarmacias);
-    MediExpress(const std::string &_ficheroMedicamentos, const std::string &_ficheroLaboratorios, const std::string &_ficheroFarmacias);
-
+    MediExpress(const std::string &nomFichPaMed, const std::string &nomFichLab,
+                const std::string &nomFichFar, unsigned long tam, float lamda);
 
     std::vector<PA_Medicamento*> getMedicamentosSinLab();
     Laboratorio* buscarLab(const std::string &nombreLab);
@@ -47,8 +52,18 @@ public:
 
     void asignarLabsMadridAMedicamentosSinAsignar();
     void _cargarLaboratoriosDesdeFichero(const std::string& _ficheroLaboratorios);
+    static unsigned long contarMedicamentos(const std::string &nomFichPaMed);
 
-    };
+
+
+    //P5
+
+    void mostrarEstadoTabla();
+    MediExpress();
+    void _postprocesarCargas(const std::string &fichFarmacias);
+
+
+};
 
 
 #endif //P2_MEDIEXPRESS_H
