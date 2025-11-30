@@ -29,5 +29,5 @@ y óptimo tanto en inserciones como en las búsquedas masivas requeridas en la p
 
 
 ## Comparación de tiempos dados en milisegundos
-Tiempo en realizar las búsquedas en la Tabla Hash:
-Tiempo en realizar las búsquedas en la Lista:
+Tiempo en realizar las búsquedas en la Tabla Hash: 0 ms 
+Tiempo en realizar las búsquedas en la Lista: 82 ms
