@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <chrono>
 
 /**
  * @brief Obtiene todas las farmacias cuya provincia contiene la cadena indicada.
@@ -451,20 +452,22 @@ MediExpress::MediExpress(): idMedication(3310, 0.7),
                             _nombMedication(), _labs(), _pharmacy(), _vMedi(), listaPaMed() {
 
 }
-void MediExpress::_postprocesarCargas(const std::string &fichFarmacias)
-{
+void MediExpress::_postprocesarCargas(const std::string &fichFarmacias){
     // ============================================================
     // 1. Construir estructura _nombMedication (nombre → puntero PA)
     // ============================================================
-    for (int id : _vMedi) {
-        PA_Medicamento* p = idMedication.buscar(id);
-        if (!p) continue;
 
-        std::stringstream ss(p->getNombre());
-        std::string palabra;
+    for (int i=0; i<_vMedi.size(); i++){
+        PA_Medicamento* p = idMedication.buscar(_vMedi[i]);
 
-        while (getline(ss, palabra, ' ')) {
-            _nombMedication.insert({palabra, p});
+        std::string nombre = p->getNombre();
+        std::stringstream separar;
+        std::string cad;
+
+        separar.str(nombre);
+
+        while (getline(separar, cad, ' ')){
+            _nombMedication.insert(make_pair(cad,p));
         }
     }
 
@@ -472,34 +475,32 @@ void MediExpress::_postprocesarCargas(const std::string &fichFarmacias)
     // 2. Asociar cada 2 medicamentos con un laboratorio
     // ============================================================
 
-    auto itLab = _labs.begin();
-    auto itMed = _vMedi.begin();
+    std::list<Laboratorio>::iterator itl = _labs.begin();
+    std::vector<int>::iterator itm = _vMedi.begin();
     PA_Medicamento* p;
 
-    while (itMed != _vMedi.end() && itLab != _labs.end()) {
+    while (itm != _vMedi.end() && itl != _labs.end()) {
+        p = idMedication.buscar(*itm);
+        suministrarMed(p, &(*itl));
+        itm++;
 
-        p = idMedication.buscar(*itMed);
-        if (p) suministrarMed(p, &(*itLab));
-        itMed++;
+        if (itm == _vMedi.end()) break;
+        p = idMedication.buscar(*itm);
+        suministrarMed(p, &(*itl));
 
-        if (itMed == _vMedi.end()) break;
-
-        p = idMedication.buscar(*itMed);
-        if (p) suministrarMed(p, &(*itLab));
-
-        itMed++;
-        itLab++;
+        itl++;
+        itm++;
     }
 
     // ============================================================
     // 3. Asociar medicamentos sin laboratorio a labs de Madrid
     // ============================================================
 
-    auto labsMadrid = buscarLabCiudad("Madrid");
-    auto sinLab = getMedicamentosSinLab();
+    std::vector<Laboratorio*> madrid = buscarLabCiudad("Madrid");
+    std::vector<PA_Medicamento*> sin = getMedicamentosSinLab();
 
-    for (int i = 0; i < labsMadrid.size() && i < sinLab.size(); i++) {
-        suministrarMed(sinLab[i], labsMadrid[i]);
+    for (int i = 0; i < madrid.size() && i < sin.size(); i++) {
+        suministrarMed(sin[i], madrid[i]);
     }
 
     // ============================================================
@@ -532,8 +533,7 @@ void MediExpress::_postprocesarCargas(const std::string &fichFarmacias)
     // 5. Reparto de medicamentos a farmacias
     // ============================================================
 
-    auto itM = _vMedi.begin();
-
+    std::vector<int>::iterator itM = _vMedi.begin();
     for (const std::string &c : vCIF) {
 
         Farmacia* f = buscarFarmacia(c);
@@ -574,81 +574,36 @@ MediExpress::MediExpress(const std::string &nomFichPaMed,
     _cargarFarmaciasDesdeFichero(nomFichFar);
 
     // ======================================================
-    // 2. PROCESAMIENTO ADICIONAL (SUSTITUYE PARTE DEL CONSTRUCTOR)
+    // 2. PRUEBA DE RENDIMIENTO ENTRE EL HASH Y LA LISTA
+    // ======================================================
+    std::cout << " 2.- Prueba de RENDIMIENTO: " << std::endl;
+
+    std::chrono::high_resolution_clock ::time_point start = std::chrono::high_resolution_clock::now();
+    for(int i=0; i<_vMedi.size(); i++){
+        idMedication.buscar(_vMedi[i]);
+    }
+    std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
+    std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    std::cout << "Tiempo busca Hash: " << duration.count() << " ms" << std::endl;
+
+    start = std::chrono::high_resolution_clock::now();
+    for(int i=0; i<_vMedi.size(); i++){
+        std::list<PA_Medicamento>::iterator it = listaPaMed.begin();
+        while (it!=listaPaMed.end()){
+            if (it->getIdNum() == _vMedi[i])
+                break;
+            it++;
+        }
+    }
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    std::cout << "Tiempo busca list: " << duration.count() << " ms" << std::endl;
+
+    // ======================================================
+    // 3. PROCESAMIENTO ADICIONAL (SUSTITUYE PARTE DEL CONSTRUCTOR)
     // ======================================================
     _postprocesarCargas(nomFichFar);
 
-
-    // ======================================================
-    // 3. LO QUE VENÍA DESPUÉS EN TU CONSTRUCTOR ORIGINAL
-    // (ESTA PARTE SE MANTIENE EXACTAMENTE IGUAL)
-    // ======================================================
-
-    // --- ENLAZAMOS CADA 2 PAMEDIC. CON UN LABORATORIO ---
-    auto itl = _labs.begin();
-    auto itm = _vMedi.begin();
-    PA_Medicamento* p;
-
-    while (itm != _vMedi.end() && itl != _labs.end()) {
-        p = idMedication.buscar(*itm);
-        suministrarMed(p, &(*itl));
-        itm++;
-
-        if (itm == _vMedi.end()) break;
-        p = idMedication.buscar(*itm);
-        suministrarMed(p, &(*itl));
-
-        itl++;
-        itm++;
-    }
-
-    // --- LABORATORIOS MADRID ---
-    std::vector<Laboratorio*> madrid = buscarLabCiudad("Madrid");
-    std::vector<PA_Medicamento*> sin = getMedicamentosSinLab();
-
-    for (int i = 0; i < madrid.size() && i < sin.size(); i++) {
-        suministrarMed(sin[i], madrid[i]);
-    }
-
-    // --- SEGUNDA LECTURA DEL FICHERO DE FARMACIAS PARA OBTENER CIF ---
-    std::vector<std::string> cif_Farma;
-    std::ifstream is2(nomFichFar);
-    std::string fila, ciff;
-    std::stringstream columnas;
-
-    if (is2.good()) {
-        while (getline(is2, fila)) {
-            if (!fila.empty()) {
-                columnas.str(fila);
-                getline(columnas, ciff, ';');
-                columnas.clear();
-                cif_Farma.push_back(ciff);
-            }
-        }
-        is2.close();
-    } else {
-        std::cout << "Error de apertura en archivo" << std::endl;
-    }
-
-    // --- ASOCIAR PaMedicamentos A CADA FARMACIA ---
-    auto itMed = _vMedi.begin();
-    for (auto &c : cif_Farma) {
-
-        Farmacia* f = buscarFarmacia(c);
-
-        int cont = 0;
-        while (cont < 100) {
-
-            suministrarFarmacia(f, *itMed, 10);
-
-            if (itMed == --_vMedi.end())
-                itMed = _vMedi.begin();
-            else
-                ++itMed;
-
-            cont++;
-        }
-    }
 }
 
 
