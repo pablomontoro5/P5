@@ -26,7 +26,7 @@ int main(int argc, const char * argv[]) {
                             "../farmacias.csv",3310,0.68);
         prueba1.mostrarEstadoTabla();
 
-        std::cout << "EJERCICIO 1 - Buscamos Medicamentos:" << std::endl;
+        std::cout << "***EJERCICIO 1 - Buscamos Medicamentos ***:" << std::endl;
         std::string compuestos[]={"MAGNESIO CLORURO HEXAHIDRATO", "CLORURO", "ANHIDRO CALCIO CLORURO",
                                   "LIDOCAINA HIDROCLORURO", "MENTA PIPERITA", "VIRUS GRIPE"};
 
@@ -38,7 +38,7 @@ int main(int argc, const char * argv[]) {
             }
         }
 
-        std::cout << "EJERCICIO 2 - Compras de MAGNESIO en Farmacias de Sevilla:" << std::endl;
+        std::cout << "***EJERCICIO 2 - Compras de MAGNESIO en Farmacias de Sevilla***:" << std::endl;
         std::vector<Farmacia*> vSevilla = prueba.buscarFarmacias("SEVILLA");
         PA_Medicamento *pMedi;
         for(int i=0; i<vSevilla.size(); ++i){
@@ -71,6 +71,68 @@ int main(int argc, const char * argv[]) {
             }
         }
 
+        std::cout << "***EJERCICIO 3 - Alerta Sanitaria en Ubeda***:" << std::endl;
+        std::vector<Farmacia*> _vJaen = prueba.buscarFarmacias("JAEN");
+        std::vector<PA_Medicamento*> _vAntigenos= prueba.buscarCompuesto("ANTIGENO OLIGOSACARIDO");
+        std::vector<Farmacia*> res;
+        for (int i=0; i < _vJaen.size(); i++) {
+            bool enc = false;
+            for (int j=0; j < _vAntigenos.size() && !enc; j++) {
+                if (_vJaen[i]->buscaMedicamID(_vAntigenos[j]->getIdNum())) {
+                    enc = true;
+                    res.push_back(_vJaen[i]);
+                }
+                _vJaen[i]->nuevoStock(_vAntigenos[j],10);
+                std::cout << "Nuevas Unidades de ANTIGENO " << _vAntigenos[j]->getNombre() << " en JAEN: "
+                     << _vJaen[i]->buscaMedicamID(_vAntigenos[j]->getIdNum())
+                     << " Farmacia: " << _vJaen[i]->getNombre() << std::endl;
+            }
+        }
+
+        std::cout << "Total farmacias en JAEN que vendian algun PaMed. con ANTIGENO OLIGOSACARIDO:" << res.size() << std::endl;
+        for (int i=0; i < res.size(); i++) {
+            std::cout << " Farmacia: " << res[i]->getNombre()
+                      << "  Localidad: " << res[i]->getLocalidad() << std::endl;
+        }
+        std::cout << "***EJERCICIO 3.2 - Recarga de stock de Antigeno***:" << std::endl;
+
+
+        std::cout << "***EJERCICIO 6 - Buscar y eliminar el CIANURO de todas las farmacias***:" << std::endl;
+        std::vector<PA_Medicamento*> cianuro= prueba.buscarCompuesto("CIANURO");
+        if (cianuro.size()==0) {
+            std::cout << "***Palabra Cianuro no hallada***" << std::endl;
+        }
+        for (int i=0; i<cianuro.size(); i++) {
+            if (prueba.eliminarMedicamento(cianuro[i]->getIdNum())){
+                std::cout << "***Compuesto: Cianuro eliminado con exito ***" << cianuro[i]->getIdNum() << " !!!" << std::endl;
+            }else{
+                std::cout << "***Compuesto: Cianuro no hallado*** " << cianuro[i]->getIdNum() << " !!!" << std::endl;
+            }
+            if (!prueba.buscarCompuesto(cianuro[i]->getIdNum())){
+                std::cout << "***Compuesto: Cianuro no existente***" << cianuro[i]->getIdNum() << std::endl;
+            }else{
+                std::cout << "***Cianuro existe ***" << cianuro[i]->getIdNum() << std::endl;
+            }
+        }
+
+        std::cout << "***EJERCICIO 6.2 - Buscar y eliminar el BISMUTO de todas las farmacias***:" << std::endl;
+        std::vector<PA_Medicamento*> bismuto= prueba.buscarCompuesto("BISMUTO");
+        if (bismuto.size()==0) {
+            std::cout << "***Palabra Bismuto no hallada***" << std::endl;
+        }
+        for (int i=0; i<bismuto.size(); i++) {
+            std::cout << bismuto[i]->getIdNum() << std::endl;
+            if (prueba.eliminarMedicamento(bismuto[i]->getIdNum())) {
+                std::cout << "***Compuesto: Bismuto eliminado con exito ***" << bismuto[i]->getIdNum() << " !!!" << std::endl;
+            } else {
+                std::cout << "***Compuesto: Bismuto no hallado***" << bismuto[i]->getIdNum() << " !!!" << std::endl;
+            }
+            if (!prueba.buscarCompuesto(bismuto[i]->getIdNum())){
+                std::cout << "***Compuesto: Bismuto no existente***" << bismuto[i]->getIdNum() << std::endl;
+            }else{
+                std::cout << "***Bismuto existe ***" << bismuto[i]->getIdNum() << std::endl;
+            }
+        }
 
 
     }catch(std::runtime_error &rte){

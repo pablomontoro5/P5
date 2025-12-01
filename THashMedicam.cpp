@@ -130,17 +130,16 @@ bool THashMedicam::borrar(unsigned long clave) {
         //y= _funcionHashNumeroUno(clave, i);
         //y= _funcionHashNumeroDos(clave, i);
         y= _funcionHashNumero3(clave, i);
-        if (tabla[y].getMarca()==OCUPADA && tabla[y].getMarca()==clave){
-
-            tabla[y].setMarca(DISPONIBLE); //lo encontre lo borro y salgo del bucle
+        if (tabla[y].getMarca()==OCUPADA && tabla[y].getClave()==clave){
             fin=true;
-            //tabla[y].dato;
+            tabla[y].setMarca(DISPONIBLE); //lo encontre lo borro y salgo del bucle
             tamal--;
         }else{
-            if (tabla[y].getMarca()==LIBRE)
+            if (tabla[y].getMarca()==LIBRE) {
                 break;
-            else
+            }else {
                 ++i;   //No he dado aun con su posicion
+            }
         }
     }
     return fin;

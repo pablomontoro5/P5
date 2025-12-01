@@ -42,8 +42,6 @@ std::vector<Farmacia*> MediExpress::buscarFarmacias(const std::string &provincia
  *       mapa interno std::map<int, PA_Medicamento> de MediExpress.
  */
 bool MediExpress::eliminarMedicamento(int id_num) {
-    bool ret = false;
-
     // 1. Eliminar el medicamento del stock de todas las farmacias que lo tengan
     std::multimap<std::string, Farmacia>::iterator it = _pharmacy.begin();
     while (it != _pharmacy.end()) {
@@ -66,12 +64,11 @@ bool MediExpress::eliminarMedicamento(int id_num) {
 
     // 3. Eliminar el medicamento de la tabla _funcionHashNumeroUno de IDs (idMedication)
     if (idMedication.borrar(id_num)) {
-        ret = true;
+        return true;
     } else {
-        ret = false;
+        return false;
     }
 
-    return ret;
 }
 
 
@@ -128,13 +125,10 @@ void MediExpress::asignarLabsMadridAMedicamentosSinAsignar() {
  * @note La búsqueda se realiza mediante el contenedor interno std::map<int, PA_Medicamento>.
  */
 PA_Medicamento* MediExpress::buscarCompuesto(int id_num) {
-
-    // Usamos directamente la tabla _funcionHashNumeroUno interna
     PA_Medicamento* encontrado = idMedication.buscar(id_num);
-
-    if (encontrado != nullptr)
+    if (encontrado != nullptr){
         return encontrado;
-
+    }
     return nullptr;
 }
 
