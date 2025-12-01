@@ -18,18 +18,20 @@ class MediExpress {
 private:
     std::multimap<std::string,Farmacia> _pharmacy;
     std::list<Laboratorio> _labs;
-    //P5
     THashMedicam idMedication;
     std::vector<int> _vMedi;
     std::multimap<std::string,PA_Medicamento*> _nombMedication;
     std::list<PA_Medicamento> listaPaMed;
 
 public:
+    void _postprocesarCargas(const std::string &fichFarmacias);
+    void _cargarLaboratoriosDesdeFichero(const std::string& _ficheroLaboratorios);
+
     std::vector<Laboratorio*> buscarLabs(const std::string &nombrePa);
     void suministrarFarmacia(Farmacia *f, int id_num, int n);
 
     void _cargarMedicamentosDesdeFichero(const std::string& _ficheroMedicamentos);
-    void asignarParesYVerificar();
+    MediExpress();
 
     void _cargarFarmaciasDesdeFichero(const std::string& _ficheroFarmacias);
     MediExpress(const std::string &nomFichPaMed, const std::string &nomFichLab,
@@ -47,20 +49,12 @@ public:
     std::vector<Laboratorio*> buscarLabCiudad(const std::string &nombreCiudad);
     Farmacia* buscarFarmacia(const std::string &cif);
 
+    void mostrarEstadoTabla();
     std::vector<PA_Medicamento*> buscarCompuesto(const std::string &nombrePA);
 
 
     void asignarLabsMadridAMedicamentosSinAsignar();
-    void _cargarLaboratoriosDesdeFichero(const std::string& _ficheroLaboratorios);
     static unsigned long contarMedicamentos(const std::string &nomFichPaMed);
-
-
-
-    //P5
-
-    void mostrarEstadoTabla();
-    MediExpress();
-    void _postprocesarCargas(const std::string &fichFarmacias);
 
 
 };
