@@ -14,52 +14,51 @@ class THashMedicam {
 
 private:
     // ----------- ATRIBUTOS INTERNOS -------------
-    unsigned tamaf;                 // tamaño de la tabla (primo mayor)
-    unsigned tamal;                 // número de elementos insertados
-    unsigned primoMenor;            // primo menor del tamaño
-    unsigned maxCol;                // colisión máxima de una inserción
-    unsigned max10;                 // cuántas veces se superan 10 colisiones
-    unsigned long sumaColisiones;   // para el promedio
-    unsigned redisp;                // número de redispersiones realizadas
+    unsigned _tamanioFisicoHash;                 ///< tamaño de la _tablaHash (primo mayor)
+    unsigned _tamanioLogicoHash;                 ///< número de elementos insertados
+    unsigned primoMenor;            ///< primo menor del tamaño
+    unsigned _maximoColisiones;                ///< colisión máxima de una inserción
+    unsigned _masDiezColisiones;                 ///< cuántas veces se superan 10 colisiones
+    unsigned long sumaColisiones;   ///< para el promedio
+    unsigned _Redispersion;               ///< número de redispersiones realizadas
 
-    std::vector<Entrada> tabla;     // la tabla _funcionHashNumeroUno en sí
+    std::vector<Entrada> _tablaHash;
 
     // ----------- FUNCIONES PRIVADAS -------------
-    bool esprimo(unsigned int n);
-    unsigned int primo_menor(unsigned int numero);
-    unsigned int primo_mayor(unsigned int numero);
+    bool esNumeroPrimo(unsigned int n);
+    unsigned int getPrimoMenor(unsigned int numero);
+    unsigned int getPrimoMayor(unsigned int numero);
 
     // Tres funciones _funcionHashNumeroUno según práctica
     unsigned _funcionHashNumeroUno(unsigned long clave, int intento);
-    unsigned _funcionHashNumeroDos(unsigned long clave, int i);
-    unsigned _funcionHashNumero3(unsigned long clave, int i);
+    unsigned _funcionHashNumeroDos(unsigned long clave, int intento);
+    unsigned _funcionHashNumero3(unsigned long clave, int intento);
 
 public:
 
     // ----------- CONSTRUCTORES -------------
     THashMedicam(unsigned long maxElementos, double lamda = 0.7);
-    THashMedicam(const THashMedicam &otro);       // constructor copia
 
-    // ----------- OPERADOR ASIGNACIÓN -------------
-    THashMedicam& operator=(const THashMedicam &otro);
 
     // ----------- DESTRUCTOR -------------
     ~THashMedicam();
 
-    // ----------- OPERACIONES PRINCIPALES -------------
-    bool insertar(unsigned long clave, PA_Medicamento &dato);
-    PA_Medicamento* buscar(unsigned long clave);
-    bool borrar(unsigned long clave);
-
     // ----------- INFORMACIÓN INTERNA -------------
-    unsigned int numElementos() const { return tamal; }
-    unsigned int tamTabla() const { return tamaf; }
-    float factorCarga() const { return (float)tamal / tamaf; }
+    unsigned int numElementos() const { return _tamanioLogicoHash; }
+    unsigned int tamTabla() const { return _tamanioFisicoHash; }
+    float factorCarga() const { return (float)_tamanioLogicoHash / _tamanioFisicoHash; }
 
-    unsigned int maxColisiones() const { return maxCol; }
-    unsigned int numMax10() const { return max10; }
-    float promedioColisiones() const { return tamal == 0 ? 0 : (float)sumaColisiones / tamal; }
-    unsigned int numRedispersiones() const { return redisp; }
+    unsigned int maxColisiones() const { return _maximoColisiones; }
+    unsigned int numMax10() const { return _masDiezColisiones; }
+    float promedioColisiones() const { return _tamanioLogicoHash == 0 ? 0 : (float)sumaColisiones / _tamanioLogicoHash; }
+    unsigned int numRedispersiones() const { return _Redispersion; }
+
+    // ----------- OPERACIONES PRINCIPALES -------------
+    bool insertarEnTabla(unsigned long clave, PA_Medicamento &dato);
+    PA_Medicamento* buscarEnTabla(unsigned long clave);
+    bool borrarEnTabla(unsigned long clave);
+
+
 
 };
 #endif //P5_THASHMEDICAM_H

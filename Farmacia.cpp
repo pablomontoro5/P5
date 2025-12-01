@@ -26,7 +26,7 @@ int Farmacia::contienePaMed(int id_num) {
 }
 /**
  * @brief Busca medicamentos por nombre (parcialmente) dentro de la farmacia.
- * @param nombreMedicam Subcadena a buscar dentro del nombre de cada medicamento.
+ * @param nombreMedicam Subcadena a buscarEnTabla dentro del nombre de cada medicamento.
  * @return std::vector dinámico con punteros a medicamentos (PA_Medicamento) cuyo nombre
  *         contiene @p nombreMedicam. Puede estar vacío.
  * @note La búsqueda recorre el contenedor interno std::set<Stock>, accediendo al
@@ -223,7 +223,7 @@ Farmacia::Farmacia(const std::string &cif, const std::string &provincia, const s
  * localizar la entrada correspondiente en el contenedor interno std::set<Stock>. Si el medicamento
  * existe en la farmacia, devuelve la cantidad de unidades almacenadas.
  *
- * @param _id_num Identificador numérico del medicamento a buscar.
+ * @param _id_num Identificador numérico del medicamento a buscarEnTabla.
  * @return Número de unidades en stock del medicamento indicado, o 0 si no existe stock en la farmacia.
  */
 int Farmacia::buscaMedicamID(int _id_num) {

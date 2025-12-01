@@ -50,7 +50,7 @@ void MediExpress::_postprocesarCargas(const std::string &fichFarmacias){
     // ============================================================
 
     for (int i=0; i<_vMedi.size(); i++){
-        PA_Medicamento* _pMedicamentoAux = idMedication.buscar(_vMedi[i]);
+        PA_Medicamento* _pMedicamentoAux = idMedication.buscarEnTabla(_vMedi[i]);
 
         std::string nombre = _pMedicamentoAux->getNombre();
         std::stringstream separar;
@@ -72,14 +72,14 @@ void MediExpress::_postprocesarCargas(const std::string &fichFarmacias){
     PA_Medicamento* _pMedAux2;
 
     while (_iteradorDeMedicamentos != _vMedi.end() && _iteradorDeLalIsta != _labs.end()) {
-        _pMedAux2 = idMedication.buscar(*_iteradorDeMedicamentos);
+        _pMedAux2 = idMedication.buscarEnTabla(*_iteradorDeMedicamentos);
         suministrarMed(_pMedAux2, &(*_iteradorDeLalIsta));
         _iteradorDeMedicamentos++;
 
         if (_iteradorDeMedicamentos == _vMedi.end()) {
             break;
         }
-        _pMedAux2 = idMedication.buscar(*_iteradorDeMedicamentos);
+        _pMedAux2 = idMedication.buscarEnTabla(*_iteradorDeMedicamentos);
         suministrarMed(_pMedAux2, &(*_iteradorDeLalIsta));
 
         _iteradorDeLalIsta++;
@@ -149,7 +149,7 @@ void MediExpress::_postprocesarCargas(const std::string &fichFarmacias){
 }
 /**
  * @brief Obtiene todas las farmacias cuya provincia contiene la cadena indicada.
- * @param provincia Subcadena a buscar dentro del campo provincia de cada farmacia.
+ * @param provincia Subcadena a buscarEnTabla dentro del campo provincia de cada farmacia.
  * @return std::vector con punteros a farmacias cuya provincia coincide parcial o totalmente.
  * @note La búsqueda se realiza recorriendo el contenedor interno std::vector<Farmacia>.
  *       La coincidencia usa std::string::find y es sensible a mayúsculas/minúsculas.
@@ -197,8 +197,8 @@ bool MediExpress::eliminarMedicamento(int id_num) {
         }
     }
 
-    // 3. Eliminar el medicamento de la tabla _funcionHashNumeroUno de IDs (idMedication)
-    if (idMedication.borrar(id_num)) {
+    // 3. Eliminar el medicamento de la _tablaHash _funcionHashNumeroUno de IDs (idMedication)
+    if (idMedication.borrarEnTabla(id_num)) {
         return true;
     } else {
         return false;
@@ -220,7 +220,7 @@ std::vector<PA_Medicamento *> MediExpress::getMedicamentosSinLab() {
     PA_Medicamento *paMedicamentoAux;
     int i=0;
     while (i < _vMedi.size()){
-        paMedicamentoAux= idMedication.buscar(_vMedi[i]);
+        paMedicamentoAux= idMedication.buscarEnTabla(_vMedi[i]);
         if(paMedicamentoAux && !paMedicamentoAux->servidoPor()){
             toRet.push_back(paMedicamentoAux);
         }
@@ -262,7 +262,7 @@ void MediExpress::asignarLabsMadridAMedicamentosSinAsignar() {
  * @note La búsqueda se realiza mediante el contenedor interno std::map<int, PA_Medicamento>.
  */
 PA_Medicamento* MediExpress::buscarCompuesto(int id_num) {
-    PA_Medicamento* encontrado = idMedication.buscar(id_num);
+    PA_Medicamento* encontrado = idMedication.buscarEnTabla(id_num);
     if (encontrado != nullptr){
         return encontrado;
     }
@@ -304,7 +304,7 @@ void MediExpress::_cargarMedicamentosDesdeFichero(const std::string &fich) {
         PA_Medicamento med(idnum, idAlpha, nombre);
 
         // Insertar en _funcionHashNumeroUno
-        idMedication.insertar(idnum, med);
+        idMedication.insertarEnTabla(idnum, med);
 
         // Insertar en lista para rendimiento
         listaPaMed.push_back(med);
@@ -319,7 +319,7 @@ void MediExpress::_cargarMedicamentosDesdeFichero(const std::string &fich) {
 
 /**
  * @brief Devuelve los laboratorios cuya localidad contenga el texto dado.
- * @param nombreCiudad Subcadena a buscar dentro del campo localidad de cada laboratorio.
+ * @param nombreCiudad Subcadena a buscarEnTabla dentro del campo localidad de cada laboratorio.
  * @return std::vector dinámico con punteros a los laboratorios que coinciden (puede estar vacío).
  * @note La búsqueda recorre la std::list<Laboratorio> interna y usa std::string::find;
  *       es sensible a mayúsculas/minúsculas.
@@ -362,7 +362,7 @@ void MediExpress::suministrarMed(PA_Medicamento *pa, Laboratorio *l) {
 
 /**
  * @brief Busca un laboratorio cuyo nombre contenga el texto dado.
- * @param nombreLab Subcadena a buscar dentro del nombre del laboratorio.
+ * @param nombreLab Subcadena a buscarEnTabla dentro del nombre del laboratorio.
  * @return Puntero al primer laboratorio cuyo nombre contenga @p nombreLab, o nullptr si no se encuentra.
  * @note La búsqueda recorre la std::list<Laboratorio> interna y usa std::string::find;
  *       la comparación es sensible a mayúsculas/minúsculas.
@@ -381,7 +381,7 @@ Laboratorio *MediExpress::buscarLab(const std::string &nombreLab) {
 
 /**
  * @brief Busca medicamentos cuyo nombre contenga la subcadena indicada.
- * @param nombrePA Subcadena a buscar dentro del nombre de cada medicamento (principio activo).
+ * @param nombrePA Subcadena a buscarEnTabla dentro del nombre de cada medicamento (principio activo).
  * @return std::vector dinámico con punteros a los medicamentos cuyo nombre contiene @p nombrePA.
  * @note La búsqueda se realiza recorriendo el std::map<int, PA_Medicamento> interno y utilizando
  *       std::string::find; la comparación es sensible a mayúsculas/minúsculas.
@@ -440,7 +440,7 @@ void MediExpress::suministrarFarmacia(Farmacia *f, int id_num, int n) {
 
 /**
  * @brief Busca una farmacia por su CIF.
- * @param cif Identificador CIF de la farmacia a buscar.
+ * @param cif Identificador CIF de la farmacia a buscarEnTabla.
  * @return Puntero a la farmacia encontrada o nullptr si no existe.
  * @note La búsqueda se realiza recorriendo el contenedor interno std::vector<Farmacia>.
  */
@@ -503,7 +503,7 @@ void MediExpress::_cargarFarmaciasDesdeFichero(const std::string &fich) {
 /**
  * @brief Constructor por defecto de MediExpress.
  *
- * Inicializa la tabla hash interna con tamaño 3310 y factor de carga 0.7,
+ * Inicializa la _tablaHash hash interna con tamaño 3310 y factor de carga 0.7,
  * dejando vacíos el resto de contenedores. No realiza carga desde fichero.
  *
  * @post El objeto queda inicializado pero sin datos. Es necesario llamar a los
@@ -515,7 +515,7 @@ MediExpress::MediExpress(): idMedication(3310, 0.7),
 }
 /**
  * @brief Busca los laboratorios que suministran medicamentos cuyo nombre contenga una subcadena dada.
- * @param nombrePa Subcadena a buscar dentro del nombre de cada medicamento.
+ * @param nombrePa Subcadena a buscarEnTabla dentro del nombre de cada medicamento.
  * @return std::vector dinámico con punteros a laboratorios que suministran medicamentos coincidentes.
  * @note La búsqueda recorre el contenedor interno std::map<int, PA_Medicamento>. El vector devuelto puede
  *       contener punteros repetidos (si un mismo laboratorio suministra varios medicamentos coincidentes).
@@ -580,7 +580,7 @@ void MediExpress::mostrarEstadoTabla() {
     std::cout << "        ESTADO DE LA TABLA HASH\n";
     std::cout << "----------------------------------------------\n";
 
-    std::cout << "Tamanio de la tabla         : " << idMedication.tamTabla() << "\n";
+    std::cout << "Tamanio de la _tablaHash         : " << idMedication.tamTabla() << "\n";
     std::cout << "Numero de elementos        : " << idMedication.numElementos() << "\n";
     std::cout << "Factor de carga            : " << idMedication.factorCarga() << "\n";
     std::cout << "Max. colisiones insertando : " << idMedication.maxColisiones() << "\n";
@@ -598,7 +598,7 @@ void MediExpress::mostrarEstadoTabla() {
  *
  * Este constructor:
  *   - Carga medicamentos, laboratorios y farmacias desde sus CSV.
- *   - Inserta los medicamentos en la tabla hash.
+ *   - Inserta los medicamentos en la _tablaHash hash.
  *   - Prueba el rendimiento comparando búsqueda en hash vs lista.
  *   - Postprocesa toda la red creando asociaciones entre:
  *        • medicamentos ↔ palabras clave
@@ -608,8 +608,8 @@ void MediExpress::mostrarEstadoTabla() {
  * @param nomFichPaMed Ruta del CSV de medicamentos.
  * @param nomFichLab Ruta del CSV de laboratorios.
  * @param nomFichFar Ruta del CSV de farmacias.
- * @param tam Tamaño base de la tabla hash interna.
- * @param lamda Factor de carga deseado de la tabla hash.
+ * @param tam Tamaño base de la _tablaHash hash interna.
+ * @param lamda Factor de carga deseado de la _tablaHash hash.
  *
  * @post El objeto queda completamente inicializado, con laboratorios y farmacias enlazados
  *       y medicamentos repartidos en todos los nodos del sistema.
@@ -639,11 +639,11 @@ MediExpress::MediExpress(const std::string &nomFichPaMed,
 
     std::chrono::high_resolution_clock ::time_point start = std::chrono::high_resolution_clock::now();
     for(int i=0; i<_vMedi.size(); i++){
-        idMedication.buscar(_vMedi[i]);
+        idMedication.buscarEnTabla(_vMedi[i]);
     }
     std::chrono::high_resolution_clock::time_point stop = std::chrono::high_resolution_clock::now();
     std::chrono::milliseconds duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "***Tiempo de la busqueda de la tabla Hash en milisegundos : ***" << duration.count() << std::endl;
+    std::cout << "***Tiempo de la busqueda de la _tablaHash Hash en milisegundos : ***" << duration.count() << std::endl;
 
     start = std::chrono::high_resolution_clock::now();
     int i=0;

@@ -32,7 +32,7 @@ Settings → Collaborators → Add: Lázaro
 git checkout -b feature/thash-basico
 # Trabajas en el código
 git add .
-git commit -m "Implementación base de tabla hash"
+git commit -m "Implementación base de _tablaHash hash"
 git push -u origin feature/thash-basico
 ```
 
@@ -106,7 +106,7 @@ git push -u origin feature/hash-dobleB
 ``` bash
 git checkout -b feature/tamanio-primo
 git add .
-git commit -m "Cálculo automático de primos para tamaños de tabla"
+git commit -m "Cálculo automático de primos para tamaños de _tablaHash"
 git push -u origin feature/tamanio-primo
 ```
 
@@ -135,7 +135,7 @@ git push -u origin feature/rendimiento
 ``` bash
 git checkout -b feature/redispersion
 git add .
-git commit -m "Redispersión dinámica incluida en insertar()"
+git commit -m "Redispersión dinámica incluida en insertarEnTabla()"
 git push -u origin feature/redispersion
 ```
 

@@ -13,15 +13,15 @@
 
 
 int main(int argc, const char * argv[]) {
-    std::cout << "*** Programa de prueba 1: Ajuste de la tabla ***" << std::endl;
+    std::cout << "*** Programa de prueba 1: Ajuste de la _tablaHash ***" << std::endl;
     try{
         //Ejecutar con las 3 tablas _funcionHashNumeroUno
-        std::cout << "***Probando la tabla Hash con lambda 0.65 ***" << std::endl;
+        std::cout << "***Probando la _tablaHash Hash con lambda 0.65 ***" << std::endl;
         MediExpress prueba("../pa_medicamentos.csv","../lab2.csv",
                            "../farmacias.csv",3310,0.65);
         prueba.mostrarEstadoTabla();
 
-        std::cout << "***Probando la tabla Hash con lambda 0.68 ***" << std::endl;
+        std::cout << "***Probando la _tablaHash Hash con lambda 0.68 ***" << std::endl;
         MediExpress prueba1("../pa_medicamentos.csv","../lab2.csv",
                             "../farmacias.csv",3310,0.68);
         prueba1.mostrarEstadoTabla();
