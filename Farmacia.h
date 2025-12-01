@@ -25,7 +25,6 @@ private:
     std::set<Stock> _order;
     MediExpress *linkMed;
 
-    int buscaMedicamID(int _id_num);
     void pedidoMedicam(int _id_Num, int n);
 
 
@@ -39,7 +38,7 @@ public:
     const std::string &getCif() const;
     void nuevoStock(PA_Medicamento *pa, int n);
 
-
+    int buscaMedicamID(int _id_num);
 
     const std::string &getProvincia() const;
     std::vector<PA_Medicamento*> buscarMedicamNombre(const std::string &nombreMedicam);
