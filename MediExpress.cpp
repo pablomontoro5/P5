@@ -260,6 +260,7 @@ std::vector<PA_Medicamento*> MediExpress::buscarCompuesto(const std::string &nom
     std::vector<std::set<PA_Medicamento*>> _vectorDeSet;
     std::stringstream _auxSeparar;
     std::string _cadenaAxuiliar;
+    _auxSeparar.str(nombrePA);
     int i=0;
     while(getline(_auxSeparar,_cadenaAxuiliar,' ')){
         std::set<PA_Medicamento*> _sAux;

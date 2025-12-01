@@ -26,6 +26,19 @@ int main(int argc, const char * argv[]) {
                             "../farmacias.csv",3310,0.68);
         prueba1.mostrarEstadoTabla();
 
+        //Buscar los siguientes compuestos por nombre completo y mostrarlos en pantalla
+        std::cout << "Ejercicio 1 - Buscamos Medicamentos:" << std::endl;
+        std::string med[]={"MAGNESIO CLORURO HEXAHIDRATO","CLORURO","ANHIDRO CALCIO CLORURO",
+                      "LIDOCAINA HIDROCLORURO","MENTA PIPERITA","VIRUS GRIPE"};
+
+        for(int i=0; i<6; ++i){
+            std::vector<PA_Medicamento *> v = prueba.buscarCompuesto(med[i]);
+            std::cout << "PaMedicamento: " << med[i] << " aparece " << v.size() << "." << std::endl;
+            for(int j=0; j<v.size(); ++j){
+                std::cout << "ID: " << v[j]->getIdNum() << " Nombre: " << v[j]->getNombre() << std::endl;
+            }
+        }
+
 
     }catch(std::runtime_error &rte){
         std::cerr << rte.what() << std::endl;
