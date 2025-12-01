@@ -16,124 +16,136 @@ int main(int argc, const char * argv[]) {
     std::cout << "*** Programa de prueba 1: Ajuste de la tabla ***" << std::endl;
     try{
         //Ejecutar con las 3 tablas _funcionHashNumeroUno
-        std::cout << "Hash-0.65: " << std::endl;
+        std::cout << "***Probando la tabla Hash con lambda 0.65 ***" << std::endl;
         MediExpress prueba("../pa_medicamentos.csv","../lab2.csv",
                            "../farmacias.csv",3310,0.65);
         prueba.mostrarEstadoTabla();
 
-        std::cout << "Hash-0.68: " << std::endl;
+        std::cout << "***Probando la tabla Hash con lambda 0.68 ***" << std::endl;
         MediExpress prueba1("../pa_medicamentos.csv","../lab2.csv",
                             "../farmacias.csv",3310,0.68);
         prueba1.mostrarEstadoTabla();
 
         std::cout << "***EJERCICIO 1 - Buscamos Medicamentos ***:" << std::endl;
-        std::string compuestos[]={"MAGNESIO CLORURO HEXAHIDRATO", "CLORURO", "ANHIDRO CALCIO CLORURO",
-                                  "LIDOCAINA HIDROCLORURO", "MENTA PIPERITA", "VIRUS GRIPE"};
+        std::string _compABuscar[]={"MAGNESIO CLORURO HEXAHIDRATO", "CLORURO", "ANHIDRO CALCIO CLORURO",
+                                    "LIDOCAINA HIDROCLORURO", "MENTA PIPERITA", "VIRUS GRIPE"};
 
-        for(int i=0; i<6; ++i){
-            std::vector<PA_Medicamento *> vComp = prueba.buscarCompuesto(compuestos[i]);
-            std::cout << "PaMedicamento: " << compuestos[i] << " aparece " << vComp.size() << "." << std::endl;
-            for(int j=0; j < vComp.size(); ++j){
-                std::cout << "ID: " << vComp[j]->getIdNum() << " Nombre: " << vComp[j]->getNombre() << std::endl;
+        int i=0;
+        while (i < 6){
+            int j=0;
+            std::vector<PA_Medicamento *> _vectorDeCompuestos = prueba.buscarCompuesto(_compABuscar[i]);
+            std::cout << "***El principio activo de Medicamento : ***" << _compABuscar[i] << "*** aparece : ****" << _vectorDeCompuestos.size() << "*** veces ***" << std::endl;
+            while(j < _vectorDeCompuestos.size()){
+                std::cout << "***Id del Principio Activo: ***" << _vectorDeCompuestos[j]->getIdNum() << "***Nombre del Principio Activo: ***" << _vectorDeCompuestos[j]->getNombre() << std::endl;
+                ++j;
             }
+            ++i;
         }
 
         std::cout << "***EJERCICIO 2 - Compras de MAGNESIO en Farmacias de Sevilla***:" << std::endl;
-        std::vector<Farmacia*> vSevilla = prueba.buscarFarmacias("SEVILLA");
-        PA_Medicamento *pMedi;
-        for(int i=0; i<vSevilla.size(); ++i){
-            std::cout << " Farmacia " << i << ": " << std::endl;
-            std::vector<PA_Medicamento*> ventas;
-
-            for(int j=0; j<12; ++j){
-                ventas = vSevilla[i]->buscarMedicamNombre("MAGNESIO");
-                std::cout << " Cliente " << j+1 << ": " << std::endl;
-                if(ventas.size() != 0){
+        std::vector<Farmacia*> _vectorDeFarmaciasEnSevilla = prueba.buscarFarmacias("SEVILLA");
+        PA_Medicamento *_pAux;
+        int i2=0;
+        while(i2 < _vectorDeFarmaciasEnSevilla.size()){
+            std::vector<PA_Medicamento*> _vectorDeVentas;
+            int j2=0;
+            while(j2 < 12){
+                _vectorDeVentas = _vectorDeFarmaciasEnSevilla[i2]->buscarMedicamNombre("MAGNESIO");
+                if(_vectorDeVentas.size() != 0){
                     bool enc=false;
-                    for (int k=0; k<ventas.size() && !enc; ++k) {
-                        if (vSevilla[i]->buscaMedicamID(ventas[k]->getIdNum())) {
+                    int k = 0;
+                    while (k < _vectorDeVentas.size() && !enc) {
+                        if (_vectorDeFarmaciasEnSevilla[i2]->buscaMedicamID(_vectorDeVentas[k]->getIdNum())) {
                             enc=true;
-                            int final= vSevilla[i]->comprarMedicam(ventas[k]->getIdNum(), 1, pMedi);
-                            std::cout << "Hay Medicamentos con MAGNESIO en: " << vSevilla[i]->getNombre() << std::endl;
-                            std::cout << "Comprado Med. id= " << ventas[k]->getIdNum() << ". Unidades iniciales: " << final << std::endl;
+                            int final= _vectorDeFarmaciasEnSevilla[i2]->comprarMedicam(_vectorDeVentas[k]->getIdNum(), 1, _pAux);
+                            std::cout << "***Se han hallado Medicamentos con Magnesio en : ***" << _vectorDeFarmaciasEnSevilla[i2]->getNombre() << std::endl;
+                            std::cout << "***Comprando el medicamento con Id :***" << _vectorDeVentas[k]->getIdNum() << "***. Presenta estas unidades inicialmente :***" << final << std::endl;
                         }
+                        k++;
                     }
                     if(!enc){
-                        std::cout << "AGOTADAS existencias de MAGNESIO en : " << vSevilla[i]->getNombre()
-                             << " SE SOLICITA" << std::endl;
-                        prueba.suministrarFarmacia(vSevilla[i], 3640, 10);
+                        std::cout << "***Se han agotado las existencias de Magnesio en :***" << _vectorDeFarmaciasEnSevilla[i2]->getNombre()
+                                  << "***Se procede a pedir ***" << std::endl;
+                        prueba.suministrarFarmacia(_vectorDeFarmaciasEnSevilla[i2], 3640, 10);
                     }
                 }else{
-                    std::cout << "NO HAY Medicamentos con MAGNESIO en : " << vSevilla[i]->getNombre()
-                         << " SE SOLICITA" << std::endl;
-                    prueba.suministrarFarmacia(vSevilla[i], 3640, 10);
+                    std::cout << "***No se han hallado Medicamentos con Magnesio en : ***" << _vectorDeFarmaciasEnSevilla[i2]->getNombre()
+                              << "***Se procede a pedir ***" << std::endl;
+                    prueba.suministrarFarmacia(_vectorDeFarmaciasEnSevilla[i2], 3640, 10);
                 }
+                ++j2;
             }
+            ++i2;
         }
 
         std::cout << "***EJERCICIO 3 - Alerta Sanitaria en Ubeda***:" << std::endl;
         std::vector<Farmacia*> _vJaen = prueba.buscarFarmacias("JAEN");
         std::vector<PA_Medicamento*> _vAntigenos= prueba.buscarCompuesto("ANTIGENO OLIGOSACARIDO");
         std::vector<Farmacia*> res;
-        for (int i=0; i < _vJaen.size(); i++) {
-            bool enc = false;
-            for (int j=0; j < _vAntigenos.size() && !enc; j++) {
-                if (_vJaen[i]->buscaMedicamID(_vAntigenos[j]->getIdNum())) {
-                    enc = true;
-                    res.push_back(_vJaen[i]);
+        int i3=0;
+        while(i3 < _vJaen.size()){
+            bool encontrado2 = false;
+            int j3=0;
+            while(j3 < _vAntigenos.size() && !encontrado2){
+                if (_vJaen[i]->buscaMedicamID(_vAntigenos[j3]->getIdNum())) {
+                    encontrado2 = true;
+                    res.push_back(_vJaen[i3]);
                 }
-                _vJaen[i]->nuevoStock(_vAntigenos[j],10);
-                std::cout << "Nuevas Unidades de ANTIGENO " << _vAntigenos[j]->getNombre() << " en JAEN: "
-                     << _vJaen[i]->buscaMedicamID(_vAntigenos[j]->getIdNum())
-                     << " Farmacia: " << _vJaen[i]->getNombre() << std::endl;
+                _vJaen[i]->nuevoStock(_vAntigenos[j3],10);
+                std::cout << "***Nuevas unidades del Antigeno :***" << _vAntigenos[j3]->getNombre() << "*** en Jaen : ***"
+                          << _vJaen[i3]->buscaMedicamID(_vAntigenos[j3]->getIdNum())
+                          << "*** en la Farmacia cuyo nombre es : ***" << _vJaen[i3]->getNombre() << std::endl;
             }
+            ++i3;
+        }
+        std::cout << "***Numero de Farmacias en Jaen que vendian algun Principio Activo con Antigeno Oligosacarido : ***" << res.size() << std::endl;
+
+        int i4=0;
+        while(i4 < res.size()){
+            std::cout << "***Nombre de la Farmacia :***" << res[i4]->getNombre()
+                      << "***Localidad donde se encuentra la Farmacia :***" << res[i4]->getLocalidad() << std::endl;
+            ++i4;
         }
 
-        std::cout << "Total farmacias en JAEN que vendian algun PaMed. con ANTIGENO OLIGOSACARIDO:" << res.size() << std::endl;
-        for (int i=0; i < res.size(); i++) {
-            std::cout << " Farmacia: " << res[i]->getNombre()
-                      << "  Localidad: " << res[i]->getLocalidad() << std::endl;
-        }
-        std::cout << "***EJERCICIO 3.2 - Recarga de stock de Antigeno***:" << std::endl;
-
-
-        std::cout << "***EJERCICIO 6 - Buscar y eliminar el CIANURO de todas las farmacias***:" << std::endl;
-        std::vector<PA_Medicamento*> cianuro= prueba.buscarCompuesto("CIANURO");
-        if (cianuro.size()==0) {
+        std::cout << "***EJERCICIO 4 - Buscar y eliminar el CIANURO de todas las farmacias***:" << std::endl;
+        std::vector<PA_Medicamento*> _vectorDeCianuro= prueba.buscarCompuesto("CIANURO");
+        if (_vectorDeCianuro.size() == 0) {
             std::cout << "***Palabra Cianuro no hallada***" << std::endl;
         }
-        for (int i=0; i<cianuro.size(); i++) {
-            if (prueba.eliminarMedicamento(cianuro[i]->getIdNum())){
-                std::cout << "***Compuesto: Cianuro eliminado con exito ***" << cianuro[i]->getIdNum() << " !!!" << std::endl;
+        int i5=0;
+        while(i5 < _vectorDeCianuro.size()){
+            if (prueba.eliminarMedicamento(_vectorDeCianuro[i5]->getIdNum())){
+                std::cout << "***Compuesto: Cianuro eliminado con exito ***" << _vectorDeCianuro[i5]->getIdNum()  << std::endl;
             }else{
-                std::cout << "***Compuesto: Cianuro no hallado*** " << cianuro[i]->getIdNum() << " !!!" << std::endl;
+                std::cout << "***Compuesto: Cianuro no hallado*** " << _vectorDeCianuro[i5]->getIdNum() << std::endl;
             }
-            if (!prueba.buscarCompuesto(cianuro[i]->getIdNum())){
-                std::cout << "***Compuesto: Cianuro no existente***" << cianuro[i]->getIdNum() << std::endl;
+            if (!prueba.buscarCompuesto(_vectorDeCianuro[i]->getIdNum())){
+                std::cout << "***Compuesto: Cianuro no existente***" << _vectorDeCianuro[i]->getIdNum() << std::endl;
             }else{
-                std::cout << "***Cianuro existe ***" << cianuro[i]->getIdNum() << std::endl;
+                std::cout << "***Cianuro existe ***" << _vectorDeCianuro[i]->getIdNum() << std::endl;
             }
+            ++i5;
         }
 
-        std::cout << "***EJERCICIO 6.2 - Buscar y eliminar el BISMUTO de todas las farmacias***:" << std::endl;
-        std::vector<PA_Medicamento*> bismuto= prueba.buscarCompuesto("BISMUTO");
-        if (bismuto.size()==0) {
+        std::cout << "***EJERCICIO 4.2 - Buscar y eliminar el BISMUTO de todas las farmacias***:" << std::endl;
+        std::vector<PA_Medicamento*> _vectorDeBismuto= prueba.buscarCompuesto("BISMUTO");
+        if (_vectorDeBismuto.size() == 0) {
             std::cout << "***Palabra Bismuto no hallada***" << std::endl;
         }
-        for (int i=0; i<bismuto.size(); i++) {
-            std::cout << bismuto[i]->getIdNum() << std::endl;
-            if (prueba.eliminarMedicamento(bismuto[i]->getIdNum())) {
-                std::cout << "***Compuesto: Bismuto eliminado con exito ***" << bismuto[i]->getIdNum() << " !!!" << std::endl;
+        int i6=0;
+        while(i6 < _vectorDeBismuto.size() ){
+            if (prueba.eliminarMedicamento(_vectorDeBismuto[i6]->getIdNum())) {
+                std::cout << "***Compuesto: Bismuto eliminado con exito ***" << _vectorDeBismuto[i6]->getIdNum() <<  std::endl;
             } else {
-                std::cout << "***Compuesto: Bismuto no hallado***" << bismuto[i]->getIdNum() << " !!!" << std::endl;
+                std::cout << "***Compuesto: Bismuto no hallado***" << _vectorDeBismuto[i6]->getIdNum() << std::endl;
             }
-            if (!prueba.buscarCompuesto(bismuto[i]->getIdNum())){
-                std::cout << "***Compuesto: Bismuto no existente***" << bismuto[i]->getIdNum() << std::endl;
+            if (!prueba.buscarCompuesto(_vectorDeBismuto[i6]->getIdNum())){
+                std::cout << "***Compuesto: Bismuto no existente***" << _vectorDeBismuto[i6]->getIdNum() << std::endl;
             }else{
-                std::cout << "***Bismuto existe ***" << bismuto[i]->getIdNum() << std::endl;
+                std::cout << "***Bismuto existe ***" << _vectorDeBismuto[i6]->getIdNum() << std::endl;
             }
+            ++i6;
         }
-
 
     }catch(std::runtime_error &rte){
         std::cerr << rte.what() << std::endl;
